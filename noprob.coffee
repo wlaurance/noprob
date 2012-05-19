@@ -30,6 +30,12 @@ currentTime = ->
 
 
 exports.run = () ->
+	program.option('-x --exec [command]', 'command to execute on change', '')
+	.parse(process.argv)
+	
+	console.log program.exec
+	
+	
 	watchDir = '.'
 	pollInterval = 500
 	
