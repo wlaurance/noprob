@@ -1,0 +1,34 @@
+{
+  "name": "noprob",
+  "description": "Simple file change monitoring for any kind of development.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Dave Druelinger"
+  },
+  "keywords": [
+    "noprob",
+    "monitor",
+    "watch",
+    "development",
+    "dev",
+    "restart",
+    "autoload",
+    "reload",
+    "change",
+    "directory",
+    "tree",
+    "walk"
+  ],
+  "dependencies": {
+    "watch":"*",
+    "commander":"*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/genericdave/noprob.git"
+  },
+  "preferGlobal": "true",
+  "bin": {
+    "noprob": "./noprob_bin"
+  }
+}
