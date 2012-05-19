@@ -5,8 +5,6 @@
 	# global commands would get run whenever anything changes
 	# local commands would get run specifically on
 		# whatever changed
-# option to pay attention to files beginning with '.'
-	# ignores by default
 
 _       = require 'underscore'
 _.str   = require 'underscore.string'
@@ -19,11 +17,12 @@ watch   = require 'watch'
 
 class App
 	constructor: ->
-		program.option('-x --exec [command]', 'command to execute on change', '')
+		program
+		.option('-x --exec [command]', 'string to execute on change', '')
+		.option('-d --dot', 'watch files the begin with a dot')
 		.parse(process.argv)
 		
 		@watchDir = '.'
-		@ignoreDotFiles = true
 		@pollInterval = 500
 		
 		@lastTime = @currentTime()
@@ -84,7 +83,7 @@ class App
 			# console.log cleanPath
 			# console.log fileName
 			# console.log extension
-			if @ignoreDotFiles and fileName[0] == '.' then return
+			if not program.dot and fileName[0] == '.' then return
 			
 			console.log "* Change detected.".green.bold
 			console.log "No prob, I'll take care of that...".green.italic
