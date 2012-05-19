@@ -8,8 +8,10 @@
 
 _      = require 'underscore'
 _.str  = require 'underscore.string'
+colors = require 'colors'
 fs     = require 'fs'
 {exec} = require 'child_process'
+watch  = require 'watch'
 
 
 execAndPipe = (execString) ->
@@ -27,14 +29,17 @@ currentTime = ->
 
 
 exports.run = () ->
+	watchDir = '.'
+	pollInterval = 500
+	
 	lastTime = currentTime()
 	
-	if process.platform == 'darwin'
+	if process.platform == 'darwin' #and false
 		watcher = (cb) ->
-			piper = exec "find -L . -type f -mtime -#{currentTime() - lastTime}s -print"
+			piper = exec "find -L #{watchDir} -type f -mtime -#{currentTime() - lastTime}s -print"
 			
 			piper.stderr.on 'data', (data) ->
-				process.stderr.write data.toString()
+				return process.stderr.write data.toString()
 			
 			piper.stdout.on 'data', (data) ->
 				files = _.str.words data, '\n'
@@ -43,12 +48,20 @@ exports.run = () ->
 				lastTime = currentTime() + 1
 			
 			piper.on 'exit', (code) ->
-				setTimeout (-> watcher(cb)), 500
+				setTimeout (-> watcher(cb)), pollInterval
 		
-	else if not fs.watch?
-		console.log 'ass'
+	else if not fs.watch? #or true
+		watcher = (cb) ->
+			files = []
+			lastDelay = currentTime()
+			watch.watchTree watchDir, (file, curr, prev) ->
+				if prev? and curr.nlink != 0
+					if lastDelay < currentTime()
+						lastDelay = currentTime() + 1
+						cb(file)
 		
 		
 	watcher (files) ->
-		console.log files
+		console.log "* Changes detected.".green.bold
+		console.log "No prob, I'll take care of that...".green.italic
 		
