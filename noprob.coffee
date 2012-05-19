@@ -34,7 +34,7 @@ exports.run = () ->
 	
 	lastTime = currentTime()
 	
-	if process.platform == 'darwin' and false
+	if process.platform == 'darwin' #and false
 		watcher = (cb) ->
 			piper = exec "find -L #{watchDir} -type f -mtime -#{currentTime() - lastTime}s -print"
 			
@@ -51,7 +51,7 @@ exports.run = () ->
 			piper.on 'exit', (code) ->
 				setTimeout (-> watcher(cb)), pollInterval
 		
-	else if not fs.watch? or true
+	else if not fs.watch? #or true
 		watcher = (cb) ->
 			watch.watchTree watchDir, (file, curr, prev) ->
 				if prev? and curr.nlink != 0
