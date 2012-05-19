@@ -23,6 +23,7 @@ class App
 		.parse(process.argv)
 		
 		@watchDir = '.'
+		@ignoreDotFiles = true
 		@pollInterval = 500
 		
 		@lastTime = @currentTime()
@@ -68,9 +69,23 @@ class App
 				if e == 'change'
 					cb(file)
 					
+	parsePath: (path) ->
+		cleanPath = path[2..] unless path[0..1] != './'
+		cleanPath = cleanPath.replace /\ /g, '\\ '
+		fileName = cleanPath[cleanPath.lastIndexOf('/')+1..]
+		extension = fileName[fileName.lastIndexOf('.')+1..]
+		if extension == fileName then extension = ''
+		return [cleanPath, fileName, extension]
+					
 	run: ->
 		piper = null
 		@watcher (file) =>
+			[cleanPath, fileName, extension] = @parsePath file
+			console.log cleanPath
+			console.log fileName
+			console.log extension
+			if @ignoreDotFiles and fileName[0] == '.' then return
+			
 			console.log "* Change detected.".green.bold
 			console.log "No prob, I'll take care of that...".green.italic
 			console.log ''
