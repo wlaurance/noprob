@@ -22,6 +22,7 @@
   "dependencies": {
     "watch":"*",
     "commander":"*",
+    "colors":"*",
     "underscore":"*",
     "underscore.string":"*"
   },
