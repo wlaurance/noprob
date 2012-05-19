@@ -30,18 +30,21 @@ exports.run = () ->
 	if process.platform == 'darwin'
 		watcher = (cb) ->
 			piper = exec "find -L . -type f -mtime -#{currentTime() - lastTime}s -print"
+			
+			piper.stderr.on 'data', (data) ->
+				process.stderr.write data.toString()
+			
 			piper.stdout.on 'data', (data) ->
 				cb data.toString()
 				# add one to the time to prevent repeat reporting
 				lastTime = currentTime() + 1
-			piper.stderr.on 'data', (data) ->
-				process.stderr.write data.toString()
+			
 			piper.on 'exit', (code) ->
 				setTimeout (-> watcher(cb)), 500
-				
-		watcher (files) ->
-			console.log files
 		
 	else if not fs.watch?
 		console.log 'ass'
 		
+		
+	watcher (files) ->
+		console.log files
