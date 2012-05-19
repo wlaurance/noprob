@@ -5,6 +5,8 @@
 	# global commands would get run whenever anything changes
 	# local commands would get run specifically on
 		# whatever changed
+# option to pay attention to files beginning with '.'
+	# ignores by default
 
 _       = require 'underscore'
 _.str   = require 'underscore.string'
@@ -19,8 +21,6 @@ class App
 	constructor: ->
 		program.option('-x --exec [command]', 'command to execute on change', '')
 		.parse(process.argv)
-		
-		console.log program.exec
 		
 		@watchDir = '.'
 		@pollInterval = 500
@@ -69,8 +69,23 @@ class App
 					cb(file)
 					
 	run: ->
+		piper = null
 		@watcher (file) =>
 			console.log "* Change detected.".green.bold
 			console.log "No prob, I'll take care of that...".green.italic
+			console.log ''
+			
+			piper?.kill()
+			piper = exec program.exec
+			
+			piper.stderr.on 'data', (data) =>
+				console.log "* Error detected.".red.bold
+				console.log ''
+				console.log data
+				console.log ''
+				console.log "No worries, I'll wait until you're ready...".green.italic
+				
+			piper.stdout.on 'data', (data) =>
+				console.log data
 
 app = new App()
