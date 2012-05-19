@@ -52,13 +52,22 @@ exports.run = () ->
 		
 	else if not fs.watch? #or true
 		watcher = (cb) ->
-			files = []
 			lastDelay = currentTime()
 			watch.watchTree watchDir, (file, curr, prev) ->
 				if prev? and curr.nlink != 0
 					if lastDelay < currentTime()
 						lastDelay = currentTime() + 1
 						cb(file)
+						
+	else
+		watcher = (cb) ->
+			lastDelay = currentTime()
+			fs.watch watchDir, (e, file) ->
+				if e == 'change'
+					if lastDelay < currentTime()
+						lastDelay = currentTime() + 1
+						cb(file)
+					
 		
 		
 	watcher (files) ->
