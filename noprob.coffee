@@ -18,9 +18,9 @@ watch   = require 'watch'
 class App
 	constructor: ->
 		program
-		.option('-x --exec [command]', 'string to execute on change', '')
-		.option('-w --watch [directory]', 'directory to watch', '.')
-		.option('-d --dot', 'watch files the begin with a dot')
+		.option('-x, --exec [command]', 'string to execute on change', '')
+		.option('-w, --watch [directory]', 'directory to watch', '.')
+		.option('-d, --dot', 'watch files the begin with a dot')
 		.parse(process.argv)
 		
 		@pollInterval = 500
