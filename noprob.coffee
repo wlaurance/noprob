@@ -6,6 +6,8 @@
 	# local commands would get run specifically on
 		# whatever changed
 
+_      = require 'underscore'
+_.str  = require 'underscore.string'
 fs     = require 'fs'
 {exec} = require 'child_process'
 
@@ -35,7 +37,8 @@ exports.run = () ->
 				process.stderr.write data.toString()
 			
 			piper.stdout.on 'data', (data) ->
-				cb data.toString()
+				files = _.str.words data, '\n'
+				cb(files)
 				# add one to the time to prevent repeat reporting
 				lastTime = currentTime() + 1
 			
@@ -48,3 +51,4 @@ exports.run = () ->
 		
 	watcher (files) ->
 		console.log files
+		
