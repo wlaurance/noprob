@@ -81,9 +81,9 @@ class App
 		piper = null
 		@watcher (file) =>
 			[cleanPath, fileName, extension] = @parsePath file
-			console.log cleanPath
-			console.log fileName
-			console.log extension
+			# console.log cleanPath
+			# console.log fileName
+			# console.log extension
 			if @ignoreDotFiles and fileName[0] == '.' then return
 			
 			console.log "* Change detected.".green.bold
@@ -98,7 +98,7 @@ class App
 				console.log ''
 				console.log data
 				console.log ''
-				console.log "No worries, I'll wait until you're ready...".green.italic
+				console.log "No worries, I'll wait until you've changed something...".green.italic
 				
 			piper.stdout.on 'data', (data) =>
 				console.log data
