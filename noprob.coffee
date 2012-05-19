@@ -19,10 +19,10 @@ class App
 	constructor: ->
 		program
 		.option('-x --exec [command]', 'string to execute on change', '')
+		.option('-w --watch [directory]', 'directory to watch', '.')
 		.option('-d --dot', 'watch files the begin with a dot')
 		.parse(process.argv)
 		
-		@watchDir = '.'
 		@pollInterval = 500
 		
 		@lastTime = @currentTime()
@@ -41,7 +41,7 @@ class App
 		
 	setDarwinWatcher: ->
 		@watcher = (cb) =>
-			piper = exec "find -L #{@watchDir} -type f -mtime -#{@currentTime() - @lastTime}s -print"
+			piper = exec "find -L #{program.watch} -type f -mtime -#{@currentTime() - @lastTime}s -print"
 			
 			piper.stderr.on 'data', (data) =>
 				return process.stderr.write data.toString()
@@ -58,13 +58,13 @@ class App
 			
 	setWatchWatcher: ->
 		@watcher = (cb) =>
-			watch.watchTree @watchDir, (file, curr, prev) =>
+			watch.watchTree program.watch, (file, curr, prev) =>
 				if prev? and curr.nlink != 0
 					cb(file)
 							
 	setNodeFsWatcher: ->
 		@watcher = (cb) =>
-			fs.watch @watchDir, (e, file) =>
+			fs.watch program.watch, (e, file) =>
 				if e == 'change'
 					cb(file)
 					
