@@ -21,7 +21,9 @@
   ],
   "dependencies": {
     "watch":"*",
-    "commander":"*"
+    "commander":"*",
+    "underscore":"*",
+    "underscore.string":"*"
   },
   "repository": {
     "type": "git",
