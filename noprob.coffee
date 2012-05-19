@@ -6,12 +6,13 @@
 	# local commands would get run specifically on
 		# whatever changed
 
-_      = require 'underscore'
-_.str  = require 'underscore.string'
-colors = require 'colors'
-fs     = require 'fs'
-{exec} = require 'child_process'
-watch  = require 'watch'
+_       = require 'underscore'
+_.str   = require 'underscore.string'
+program = require 'commander'
+colors  = require 'colors'
+fs      = require 'fs'
+{exec}  = require 'child_process'
+watch   = require 'watch'
 
 
 execAndPipe = (execString) ->
