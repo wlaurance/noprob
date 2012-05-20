@@ -18,7 +18,8 @@ watch   = require 'watch'
 class App
 	constructor: ->
 		program
-		.option('-x, --exec [command]', 'string to execute on change', '')
+		.option('-g, --global [command]', 'string to execute globally when any file changes', '')
+		.option('-l, --local [command]', "string to execute locally on any file that's changed", '')
 		.option('-w, --watch [directory]', 'directory to watch', '.')
 		.option('-d, --dot', 'watch files the begin with a dot')
 		.parse(process.argv)
@@ -84,9 +85,26 @@ class App
 		extension = fileName[fileName.lastIndexOf('.')+1..]
 		if extension == fileName then extension = ''
 		return [cleanPath, fileName, extension]
+		
+	execAndPipe: (command) ->
+		piper = exec command
+		
+		piper.stderr.on 'data', (data) =>
+			console.log "* Error detected.".red.bold
+			console.log ''
+			console.log data
+			console.log ''
+			console.log "No worries, I'll wait until you've changed something...".red.italic
+			
+		piper.stdout.on 'data', (data) =>
+			console.log data
+			
+		return piper
 					
 	run: ->
-		piper = null
+		console.log 'Watching for changes...'.green.bold
+		
+		gPiper = null
 		@watcher (file) =>
 			[cleanPath, fileName, extension] = @parsePath file
 			if not program.dot and @hasDotFile(cleanPath, fileName) then return
@@ -98,17 +116,10 @@ class App
 			console.log "No prob, I'll take care of that...".green.italic
 			console.log ''
 			
-			piper?.kill()
-			piper = exec program.exec
+			gPiper?.kill()
+			if program.global != ''
+				gPiper = @execAndPipe program.global
 			
-			piper.stderr.on 'data', (data) =>
-				console.log "* Error detected.".red.bold
-				console.log ''
-				console.log data
-				console.log ''
-				console.log "No worries, I'll wait until you've changed something...".green.italic
-				
-			piper.stdout.on 'data', (data) =>
-				console.log data
+			
 
 app = new App()
