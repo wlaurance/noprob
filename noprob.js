@@ -120,11 +120,11 @@
         _this = this;
       piper = exec(command);
       piper.stderr.on('data', function(data) {
-        console.log("* Error detected.".red.bold);
+        console.log("[noprob] Error detected.".red.bold);
         console.log('');
         process.stdout.write(data);
         console.log('');
-        return console.log("No worries, I'll wait until you've changed something...".red.italic);
+        return console.log("[noprob] No worries, I'll wait until you've changed something...".red.italic);
       });
       piper.stdout.on('data', function(data) {
         return process.stdout.write(data);
@@ -138,20 +138,20 @@
     App.prototype.run = function() {
       var gPiper, lPipers,
         _this = this;
-      console.log('Watching for changes...'.green.bold);
-      gPiper = null;
+      console.log('[noprob] Watching for changes...'.green.bold);
+      gPiper = this.execAndPipe(program.exec);
       lPipers = {};
       return this.watcher(function(file) {
         var cleanPath, extension, fileName, _ref, _ref1;
         _ref = _this.parsePath(file), cleanPath = _ref[0], fileName = _ref[1], extension = _ref[2];
-        if (_this.extensions.indexOf(extension) === -1) {
+        if (_this.extensions.indexOf(extension) === -1 && program.extension !== '') {
           return;
         }
         if (!program.dot && _this.hasDotFile(cleanPath, fileName)) {
           return;
         }
         console.log('');
-        console.log("* Change detected.".green.bold);
+        console.log("[noprob] Change detected.".green.bold);
         console.log("No prob, I'll take care of that...".green.italic);
         console.log('');
         if (gPiper != null) {
