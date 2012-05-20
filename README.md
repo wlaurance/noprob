@@ -3,8 +3,8 @@ Noprob
 Simple file change monitoring for any kind of development.
 
 * [Why?](#a)
-* [Features and Usage](#b)
-* [Installation](#c)
+* [Installation](#b)
+* [Options](#c)
 
 <a name='a' />
 Why?
@@ -14,8 +14,24 @@ Having a utility that can restart or recompile or reconfigure or re*whatever* wh
 No worries.  Noprob's got your back, no problem.
 
 <a name='b' />
-Features and Usage
+Installation
 ----
-Noprob allows you to execute arbitrary commands in two modes: global and local.
+[Install npm.](http://nodejs.org/#download) (it comes with Node.js).
+
+Run: `$ sudo npm -g install noprob`
 
 <a name='c' />
+Options
+----
+* -h, --help
+	* output usage information
+* -x, --exec [command]
+	* string to execute globally on any file change
+* -l, --local [command]
+	* string to execute locally on any file that's changed
+* -w, --watch [directory]
+	* directory to watch
+* -e, --extension [extensions]
+	* list of file extensions to watch
+* -d, --dot
+	* watch hidden dot files
