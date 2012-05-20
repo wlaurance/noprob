@@ -98,8 +98,8 @@ class App
 		return piper
 		
 	takeCareOfIt: (what) ->
-		console.log "No prob, I'll take care of that...".green.italic
-		console.log "$ #{what}".green
+		console.log "[noprob] No prob, I'll take care of that...".green.italic
+		console.log "[noprob] Executing '#{what}'".green
 					
 	run: ->
 		console.log '[noprob] Watching for changes...'.green.bold
