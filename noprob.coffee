@@ -104,7 +104,7 @@ class App
 		lPipers = {}
 		@watcher (file) =>
 			[cleanPath, fileName, extension] = @parsePath file
-			if @extensions.indexOf(extension) == -1 then return
+			if @extensions.indexOf(extension) == -1 and @extensions.length > 0 then return
 			if not program.dot and @hasDotFile(cleanPath, fileName) then return
 			# console.log cleanPath
 			# console.log fileName
