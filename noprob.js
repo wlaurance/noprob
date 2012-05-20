@@ -172,7 +172,7 @@
         });
         if (program.exec !== '') {
           if (_this.currentTime() > gRelease) {
-            gRelease = _this.currentTime + 1;
+            gRelease = _this.currentTime() + 1;
             _this.takeCareOfIt(program.exec);
             if (gPiper != null) {
               gPiper.kill();

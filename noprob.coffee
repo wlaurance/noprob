@@ -124,7 +124,7 @@ class App
 				
 			if program.exec != ''
 				if @currentTime() > gRelease
-					gRelease = @currentTime + 1
+					gRelease = @currentTime() + 1
 					@takeCareOfIt program.exec
 					gPiper?.kill()
 					gPiper = @execAndPipe program.exec
