@@ -21,11 +21,12 @@ class App
 		.option('-g, --global [command]', 'string to execute globally when any file changes', '')
 		.option('-l, --local [command]', "string to execute locally on any file that's changed", '')
 		.option('-w, --watch [directory]', 'directory to watch', '.')
-		.option('-d, --dot', 'watch files the begin with a dot')
+		.option('-e, --extension [extensions]', 'list of file extensions to watch', '')
+		.option('-d, --dot', 'watch hidden dot files')
 		.parse(process.argv)
 		
+		@extensions = _.str.words program.extension, '|'
 		@pollInterval = 500
-		
 		@lastTime = @currentTime()
 		
 		if process.platform == 'darwin'
@@ -111,11 +112,13 @@ class App
 		lPipers = {}
 		@watcher (file) =>
 			[cleanPath, fileName, extension] = @parsePath file
+			if @extensions.indexOf(extension) == -1 then return
 			if not program.dot and @hasDotFile(cleanPath, fileName) then return
 			# console.log cleanPath
 			# console.log fileName
 			# console.log extension
 			
+			console.log ''
 			console.log "* Change detected.".green.bold
 			console.log "No prob, I'll take care of that...".green.italic
 			console.log ''
