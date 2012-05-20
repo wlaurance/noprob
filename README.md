@@ -49,9 +49,9 @@ There are two ways to execute commands in Noprob: globally and locally.
 **Global** commands run on every file change without worrying about specific files.  They are defined with `-x` or `--exec`.
 
 Run and restart a node server on javascript source changes:
-`$ noprob -x 'node server.js' -e 'js'`
+* `$ noprob -x 'node server.js' -e 'js'`
 
 **Local** commands accept the `<file>` tag which will insert the changed file's name into the command.  They are defined with `-l` or `--local`.
 
 Compile individual coffescript files in the "src" folder into javascript on demand (closely mimics coffescript's internal -w option):
-`$ noprob -l 'coffee -c <file>' -e 'coffee' -w src`
+* `$ noprob -l 'coffee -c <file>' -e 'coffee' -w src`
