@@ -48,7 +48,7 @@ Usage and Examples
 ----
 There are two ways to execute commands in Noprob: globally and locally.
 
-**Global** commands run on every file change without worrying about specific files.  They are defined with `-x` or `--exec`.
+**Global** commands run once on noprob startup and then on every file change without worrying about specific files.  They are defined with `-x` or `--exec`.
 
 Run and restart a node server on javascript source changes:
 * `$ noprob -x 'node server.js' -e 'js'`
