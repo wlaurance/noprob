@@ -19,7 +19,8 @@
   App = (function() {
 
     function App() {
-      program.option('-g, --global [command]', 'string to execute globally when any file changes', '').option('-l, --local [command]', "string to execute locally on any file that's changed", '').option('-w, --watch [directory]', 'directory to watch', '.').option('-d, --dot', 'watch files the begin with a dot').parse(process.argv);
+      program.option('-g, --global [command]', 'string to execute globally when any file changes', '').option('-l, --local [command]', "string to execute locally on any file that's changed", '').option('-w, --watch [directory]', 'directory to watch', '.').option('-e, --extension [extensions]', 'list of file extensions to watch', '').option('-d, --dot', 'watch hidden dot files').parse(process.argv);
+      this.extensions = _.str.words(program.extension, '|');
       this.pollInterval = 500;
       this.lastTime = this.currentTime();
       if (process.platform === 'darwin') {
@@ -143,9 +144,13 @@
       return this.watcher(function(file) {
         var cleanPath, extension, fileName, _ref, _ref1;
         _ref = _this.parsePath(file), cleanPath = _ref[0], fileName = _ref[1], extension = _ref[2];
+        if (_this.extensions.indexOf(extension) === -1) {
+          return;
+        }
         if (!program.dot && _this.hasDotFile(cleanPath, fileName)) {
           return;
         }
+        console.log('');
         console.log("* Change detected.".green.bold);
         console.log("No prob, I'll take care of that...".green.italic);
         console.log('');
