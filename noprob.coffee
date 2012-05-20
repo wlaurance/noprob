@@ -1,11 +1,3 @@
-# can be interactive
-	# e.g. typing q could quit (killing processes
-		# and informing of anything hanging)
-# can have global and local commands
-	# global commands would get run whenever anything changes
-	# local commands would get run specifically on
-		# whatever changed
-
 _       = require 'underscore'
 _.str   = require 'underscore.string'
 program = require 'commander'
