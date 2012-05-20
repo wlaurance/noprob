@@ -99,12 +99,16 @@ class App
 		piper.stdout.on 'data', (data) =>
 			console.log data
 			
+		piper.on 'exit', (code) =>
+			piper.dead = true
+			
 		return piper
 					
 	run: ->
 		console.log 'Watching for changes...'.green.bold
 		
 		gPiper = null
+		lPipers = {}
 		@watcher (file) =>
 			[cleanPath, fileName, extension] = @parsePath file
 			if not program.dot and @hasDotFile(cleanPath, fileName) then return
@@ -117,9 +121,17 @@ class App
 			console.log ''
 			
 			gPiper?.kill()
+			lPipers[cleanPath]?.kill()
+			
+			# clean up dead pipes
+			process.nextTick ->
+				for path,piper of lPipers
+					if piper.dead then lPipers[path] = null
+				
 			if program.global != ''
 				gPiper = @execAndPipe program.global
-			
+			if program.local != ''
+				lPipers[cleanPath] = @execAndPipe program.local
 			
 
 app = new App()
