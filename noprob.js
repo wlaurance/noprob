@@ -120,8 +120,8 @@
         _this = this;
       piper = exec(command);
       piper.stderr.on('data', function(data) {
-        console.log("[noprob] Error detected.".red.bold);
         console.log('');
+        console.log("[noprob] Error detected.".red.bold);
         process.stdout.write(data);
         console.log('');
         return console.log("[noprob] No worries, I'll wait until you've changed something...".red.italic);
@@ -135,14 +135,20 @@
       return piper;
     };
 
+    App.prototype.takeCareOfIt = function(what) {
+      console.log("No prob, I'll take care of that...".green.italic);
+      return console.log(("$ " + what).green);
+    };
+
     App.prototype.run = function() {
-      var gPiper, lPipers,
+      var gPiper, gRelease, lPipers,
         _this = this;
       console.log('[noprob] Watching for changes...'.green.bold);
       gPiper = this.execAndPipe(program.exec);
+      gRelease = this.currentTime() + 1;
       lPipers = {};
       return this.watcher(function(file) {
-        var cleanPath, extension, fileName, _ref, _ref1;
+        var cleanPath, extension, fileName, tempCmd, _ref, _ref1;
         _ref = _this.parsePath(file), cleanPath = _ref[0], fileName = _ref[1], extension = _ref[2];
         if (_this.extensions.indexOf(extension) === -1 && program.extension !== '') {
           return;
@@ -151,15 +157,7 @@
           return;
         }
         console.log('');
-        console.log("[noprob] Change detected.".green.bold);
-        console.log("No prob, I'll take care of that...".green.italic);
-        console.log('');
-        if (gPiper != null) {
-          gPiper.kill();
-        }
-        if ((_ref1 = lPipers[cleanPath]) != null) {
-          _ref1.kill();
-        }
+        console.log(("[noprob] Change detected in " + fileName + ".").green.bold);
         process.nextTick(function() {
           var path, piper, _results;
           _results = [];
@@ -174,10 +172,22 @@
           return _results;
         });
         if (program.exec !== '') {
-          gPiper = _this.execAndPipe(program.exec);
+          if (_this.currentTime() > gRelease) {
+            gRelease = _this.currentTime + 1;
+            _this.takeCareOfIt(program.exec);
+            if (gPiper != null) {
+              gPiper.kill();
+            }
+            gPiper = _this.execAndPipe(program.exec);
+          }
         }
         if (program.local !== '') {
-          return lPipers[cleanPath] = _this.execAndPipe(program.local.replace('<file>', cleanPath));
+          tempCmd = program.local.replace('<file>', cleanPath);
+          _this.takeCareOfIt(tempCmd);
+          if ((_ref1 = lPipers[cleanPath]) != null) {
+            _ref1.kill();
+          }
+          return lPipers[cleanPath] = _this.execAndPipe(tempCmd);
         }
       });
     };

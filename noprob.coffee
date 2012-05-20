@@ -83,8 +83,8 @@ class App
 		piper = exec command
 		
 		piper.stderr.on 'data', (data) =>
-			console.log "[noprob] Error detected.".red.bold
 			console.log ''
+			console.log "[noprob] Error detected.".red.bold
 			process.stdout.write data
 			console.log ''
 			console.log "[noprob] No worries, I'll wait until you've changed something...".red.italic
@@ -96,11 +96,16 @@ class App
 			piper.dead = true
 			
 		return piper
+		
+	takeCareOfIt: (what) ->
+		console.log "No prob, I'll take care of that...".green.italic
+		console.log "$ #{what}".green
 					
 	run: ->
 		console.log '[noprob] Watching for changes...'.green.bold
 		
 		gPiper = @execAndPipe program.exec
+		gRelease = @currentTime() + 1
 		lPipers = {}
 		@watcher (file) =>
 			[cleanPath, fileName, extension] = @parsePath file
@@ -111,12 +116,7 @@ class App
 			# console.log extension
 			
 			console.log ''
-			console.log "[noprob] Change detected.".green.bold
-			console.log "No prob, I'll take care of that...".green.italic
-			console.log ''
-			
-			gPiper?.kill()
-			lPipers[cleanPath]?.kill()
+			console.log "[noprob] Change detected in #{fileName}.".green.bold
 			
 			# clean up dead pipes
 			process.nextTick ->
@@ -124,9 +124,16 @@ class App
 					if piper.dead then lPipers[path] = null
 				
 			if program.exec != ''
-				gPiper = @execAndPipe program.exec
+				if @currentTime() > gRelease
+					gRelease = @currentTime + 1
+					@takeCareOfIt program.exec
+					gPiper?.kill()
+					gPiper = @execAndPipe program.exec
 			if program.local != ''
-				lPipers[cleanPath] = @execAndPipe program.local.replace('<file>', cleanPath)
+				tempCmd = program.local.replace('<file>', cleanPath)
+				@takeCareOfIt tempCmd
+				lPipers[cleanPath]?.kill()
+				lPipers[cleanPath] = @execAndPipe tempCmd
 			
 
 app = new App()
