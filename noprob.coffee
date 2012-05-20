@@ -10,7 +10,7 @@ watch   = require 'watch'
 class App
 	constructor: ->
 		program
-		.option('-g, --global [command]', 'string to execute globally when any file changes', '')
+		.option('-x, --exec [command]', 'string to execute globally on any file change', '')
 		.option('-l, --local [command]', "string to execute locally on any file that's changed", '')
 		.option('-w, --watch [directory]', 'directory to watch', '.')
 		.option('-e, --extension [extensions]', 'list of file extensions to watch', '')
@@ -123,8 +123,8 @@ class App
 				for path,piper of lPipers
 					if piper.dead then lPipers[path] = null
 				
-			if program.global != ''
-				gPiper = @execAndPipe program.global
+			if program.exec != ''
+				gPiper = @execAndPipe program.exec
 			if program.local != ''
 				lPipers[cleanPath] = @execAndPipe program.local.replace('<file>', cleanPath)
 			
