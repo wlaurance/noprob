@@ -100,7 +100,7 @@ class App
 	run: ->
 		console.log '[noprob] Watching for changes...'.green.bold
 		
-		gPiper = null
+		gPiper = @execAndPipe program.exec
 		lPipers = {}
 		@watcher (file) =>
 			[cleanPath, fileName, extension] = @parsePath file
