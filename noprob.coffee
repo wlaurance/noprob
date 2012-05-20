@@ -92,12 +92,12 @@ class App
 		piper.stderr.on 'data', (data) =>
 			console.log "* Error detected.".red.bold
 			console.log ''
-			console.log data
+			process.stdout.write data
 			console.log ''
 			console.log "No worries, I'll wait until you've changed something...".red.italic
 			
 		piper.stdout.on 'data', (data) =>
-			console.log data
+			process.stdout.write data
 			
 		piper.on 'exit', (code) =>
 			piper.dead = true
