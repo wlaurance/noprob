@@ -10,7 +10,8 @@ watch   = require 'watch'
 class App
 	constructor: ->
 		program
-		.option('-x, --exec [command]', 'string to execute when any file changes', '')
+		.option('-g, --global [command]', 'string to execute globally when any file changes', '')
+		.option('-l, --local [command]', "string to execute locally on any file that's changed", '')
 		.option('-w, --watch [directory]', 'directory to watch', '.')
 		.option('-e, --extension [extensions]', 'list of file extensions to watch', '')
 		.option('-d, --dot', 'watch hidden dot files')
@@ -99,7 +100,8 @@ class App
 	run: ->
 		console.log 'Watching for changes...'.green.bold
 		
-		pipers = {}
+		gPiper = null
+		lPipers = {}
 		@watcher (file) =>
 			[cleanPath, fileName, extension] = @parsePath file
 			if @extensions.indexOf(extension) == -1 then return
@@ -113,15 +115,18 @@ class App
 			console.log "No prob, I'll take care of that...".green.italic
 			console.log ''
 			
-			pipers[cleanPath]?.kill()
+			gPiper?.kill()
+			lPipers[cleanPath]?.kill()
 			
 			# clean up dead pipes
 			process.nextTick ->
-				for path,piper of pipers
-					if piper.dead then pipers[path] = null
-			
-			if program.exec != ''
-				pipers[cleanPath] = @execAndPipe program.exec.replace('<file>', cleanPath)
+				for path,piper of lPipers
+					if piper.dead then lPipers[path] = null
+				
+			if program.global != ''
+				gPiper = @execAndPipe program.global
+			if program.local != ''
+				lPipers[cleanPath] = @execAndPipe program.local.replace('<file>', cleanPath)
 			
 
 app = new App()
