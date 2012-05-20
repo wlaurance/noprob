@@ -115,7 +115,6 @@ class App
 			# console.log fileName
 			# console.log extension
 			
-			console.log ''
 			console.log "[noprob] Change detected in #{fileName}.".green.bold
 			
 			# clean up dead pipes
