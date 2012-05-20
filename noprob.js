@@ -19,7 +19,7 @@
   App = (function() {
 
     function App() {
-      program.option('-x, --exec [command]', 'string to execute on change', '').option('-w, --watch [directory]', 'directory to watch', '.').option('-d, --dot', 'watch files the begin with a dot').parse(process.argv);
+      program.option('-g, --global [command]', 'string to execute globally when any file changes', '').option('-l, --local [command]', "string to execute locally on any file that's changed", '').option('-w, --watch [directory]', 'directory to watch', '.').option('-d, --dot', 'watch files the begin with a dot').parse(process.argv);
       this.pollInterval = 500;
       this.lastTime = this.currentTime();
       if (process.platform === 'darwin') {
@@ -114,12 +114,34 @@
       return [cleanPath, fileName, extension];
     };
 
-    App.prototype.run = function() {
+    App.prototype.execAndPipe = function(command) {
       var piper,
         _this = this;
-      piper = null;
+      piper = exec(command);
+      piper.stderr.on('data', function(data) {
+        console.log("* Error detected.".red.bold);
+        console.log('');
+        process.stdout.write(data);
+        console.log('');
+        return console.log("No worries, I'll wait until you've changed something...".red.italic);
+      });
+      piper.stdout.on('data', function(data) {
+        return process.stdout.write(data);
+      });
+      piper.on('exit', function(code) {
+        return piper.dead = true;
+      });
+      return piper;
+    };
+
+    App.prototype.run = function() {
+      var gPiper, lPipers,
+        _this = this;
+      console.log('Watching for changes...'.green.bold);
+      gPiper = null;
+      lPipers = {};
       return this.watcher(function(file) {
-        var cleanPath, extension, fileName, _ref;
+        var cleanPath, extension, fileName, _ref, _ref1;
         _ref = _this.parsePath(file), cleanPath = _ref[0], fileName = _ref[1], extension = _ref[2];
         if (!program.dot && _this.hasDotFile(cleanPath, fileName)) {
           return;
@@ -127,20 +149,31 @@
         console.log("* Change detected.".green.bold);
         console.log("No prob, I'll take care of that...".green.italic);
         console.log('');
-        if (piper != null) {
-          piper.kill();
+        if (gPiper != null) {
+          gPiper.kill();
         }
-        piper = exec(program.exec);
-        piper.stderr.on('data', function(data) {
-          console.log("* Error detected.".red.bold);
-          console.log('');
-          console.log(data);
-          console.log('');
-          return console.log("No worries, I'll wait until you've changed something...".green.italic);
+        if ((_ref1 = lPipers[cleanPath]) != null) {
+          _ref1.kill();
+        }
+        process.nextTick(function() {
+          var path, piper, _results;
+          _results = [];
+          for (path in lPipers) {
+            piper = lPipers[path];
+            if (piper.dead) {
+              _results.push(lPipers[path] = null);
+            } else {
+              _results.push(void 0);
+            }
+          }
+          return _results;
         });
-        return piper.stdout.on('data', function(data) {
-          return console.log(data);
-        });
+        if (program.global !== '') {
+          gPiper = _this.execAndPipe(program.global);
+        }
+        if (program.local !== '') {
+          return lPipers[cleanPath] = _this.execAndPipe(program.local);
+        }
       });
     };
 
