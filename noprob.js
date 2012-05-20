@@ -19,9 +19,7 @@
   App = (function() {
 
     function App() {
-      program.option('-x --exec [command]', 'command to execute on change', '').parse(process.argv);
-      this.watchDir = '.';
-      this.ignoreDotFiles = true;
+      program.option('-x, --exec [command]', 'string to execute on change', '').option('-w, --watch [directory]', 'directory to watch', '.').option('-d, --dot', 'watch files the begin with a dot').parse(process.argv);
       this.pollInterval = 500;
       this.lastTime = this.currentTime();
       if (process.platform === 'darwin') {
@@ -39,21 +37,31 @@
     };
 
     App.prototype.setDarwinWatcher = function() {
-      var _this = this;
+      var repeatCheck,
+        _this = this;
+      repeatCheck = {};
       return this.watcher = function(cb) {
         var piper;
-        piper = exec("find -L " + _this.watchDir + " -type f -mtime -" + (_this.currentTime() - _this.lastTime) + "s -print");
+        piper = exec("find -L " + program.watch + " -type f -mtime -" + (_this.currentTime() - _this.lastTime) + "s -print");
         piper.stderr.on('data', function(data) {
           return process.stderr.write(data.toString());
         });
         piper.stdout.on('data', function(data) {
-          var file, files, _i, _len;
+          var file, files, stats, _i, _len, _results;
+          _this.lastTime = _this.currentTime();
           files = _.str.words(data, '\n');
+          _results = [];
           for (_i = 0, _len = files.length; _i < _len; _i++) {
             file = files[_i];
-            cb(file);
+            stats = fs.statSync(file);
+            if (!(repeatCheck[file] != null) || repeatCheck[file].getTime() !== stats.mtime.getTime()) {
+              repeatCheck[file] = stats.mtime;
+              _results.push(cb(file));
+            } else {
+              _results.push(void 0);
+            }
           }
-          return _this.lastTime = _this.currentTime() + 1;
+          return _results;
         });
         return piper.on('exit', function(code) {
           return setTimeout((function() {
@@ -66,7 +74,7 @@
     App.prototype.setWatchWatcher = function() {
       var _this = this;
       return this.watcher = function(cb) {
-        return watch.watchTree(_this.watchDir, function(file, curr, prev) {
+        return watch.watchTree(program.watch, function(file, curr, prev) {
           if ((prev != null) && curr.nlink !== 0) {
             return cb(file);
           }
@@ -77,12 +85,19 @@
     App.prototype.setNodeFsWatcher = function() {
       var _this = this;
       return this.watcher = function(cb) {
-        return fs.watch(_this.watchDir, function(e, file) {
+        return fs.watch(program.watch, function(e, file) {
           if (e === 'change') {
             return cb(file);
           }
         });
       };
+    };
+
+    App.prototype.hasDotFile = function(path, fileName) {
+      if (fileName[0] === '.' || path[0] === '.' || path.indexOf('/.') !== -1) {
+        return true;
+      }
+      return false;
     };
 
     App.prototype.parsePath = function(path) {
@@ -106,10 +121,7 @@
       return this.watcher(function(file) {
         var cleanPath, extension, fileName, _ref;
         _ref = _this.parsePath(file), cleanPath = _ref[0], fileName = _ref[1], extension = _ref[2];
-        console.log(cleanPath);
-        console.log(fileName);
-        console.log(extension);
-        if (_this.ignoreDotFiles && fileName[0] === '.') {
+        if (!program.dot && _this.hasDotFile(cleanPath, fileName)) {
           return;
         }
         console.log("* Change detected.".green.bold);
@@ -124,7 +136,7 @@
           console.log('');
           console.log(data);
           console.log('');
-          return console.log("No worries, I'll wait until you're ready...".green.italic);
+          return console.log("No worries, I'll wait until you've changed something...".green.italic);
         });
         return piper.stdout.on('data', function(data) {
           return console.log(data);

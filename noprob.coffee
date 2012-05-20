@@ -40,6 +40,7 @@ class App
 		Math.round(new Date().getTime() / 1000)
 		
 	setDarwinWatcher: ->
+		repeatCheck = {}
 		@watcher = (cb) =>
 			piper = exec "find -L #{program.watch} -type f -mtime -#{@currentTime() - @lastTime}s -print"
 			
@@ -47,11 +48,14 @@ class App
 				return process.stderr.write data.toString()
 			
 			piper.stdout.on 'data', (data) =>
+				@lastTime = @currentTime()
 				files = _.str.words data, '\n'
 				for file in files
-					cb(file)
-				# add one to the time to prevent repeat reporting
-				@lastTime = @currentTime() + 1
+					# prevent repeat reporting
+					stats = fs.statSync file
+					if not repeatCheck[file]? or repeatCheck[file].getTime() != stats.mtime.getTime()
+						repeatCheck[file] = stats.mtime
+						cb(file)
 			
 			piper.on 'exit', (code) =>
 				setTimeout (=> @watcher(cb)), @pollInterval
@@ -68,6 +72,11 @@ class App
 				if e == 'change'
 					cb(file)
 					
+	hasDotFile: (path, fileName) ->
+		if fileName[0] == '.' or path[0] == '.' or path.indexOf('/.') != -1
+			return true
+		false
+					
 	parsePath: (path) ->
 		cleanPath = path[2..] unless path[0..1] != './'
 		cleanPath = cleanPath.replace /\ /g, '\\ '
@@ -80,10 +89,10 @@ class App
 		piper = null
 		@watcher (file) =>
 			[cleanPath, fileName, extension] = @parsePath file
+			if not program.dot and @hasDotFile(cleanPath, fileName) then return
 			# console.log cleanPath
 			# console.log fileName
 			# console.log extension
-			if not program.dot and fileName[0] == '.' then return
 			
 			console.log "* Change detected.".green.bold
 			console.log "No prob, I'll take care of that...".green.italic
