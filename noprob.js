@@ -19,7 +19,7 @@
   App = (function() {
 
     function App() {
-      program.option('-g, --global [command]', 'string to execute globally when any file changes', '').option('-l, --local [command]', "string to execute locally on any file that's changed", '').option('-w, --watch [directory]', 'directory to watch', '.').option('-e, --extension [extensions]', 'list of file extensions to watch', '').option('-d, --dot', 'watch hidden dot files').parse(process.argv);
+      program.option('-x, --exec [command]', 'string to execute when any file changes', '').option('-w, --watch [directory]', 'directory to watch', '.').option('-e, --extension [extensions]', 'list of file extensions to watch', '').option('-d, --dot', 'watch hidden dot files').parse(process.argv);
       this.extensions = _.str.words(program.extension, '|');
       this.pollInterval = 500;
       this.lastTime = this.currentTime();
@@ -136,11 +136,10 @@
     };
 
     App.prototype.run = function() {
-      var gPiper, lPipers,
+      var pipers,
         _this = this;
       console.log('Watching for changes...'.green.bold);
-      gPiper = null;
-      lPipers = {};
+      pipers = {};
       return this.watcher(function(file) {
         var cleanPath, extension, fileName, _ref, _ref1;
         _ref = _this.parsePath(file), cleanPath = _ref[0], fileName = _ref[1], extension = _ref[2];
@@ -154,30 +153,24 @@
         console.log("* Change detected.".green.bold);
         console.log("No prob, I'll take care of that...".green.italic);
         console.log('');
-        if (gPiper != null) {
-          gPiper.kill();
-        }
-        if ((_ref1 = lPipers[cleanPath]) != null) {
+        if ((_ref1 = pipers[cleanPath]) != null) {
           _ref1.kill();
         }
         process.nextTick(function() {
           var path, piper, _results;
           _results = [];
-          for (path in lPipers) {
-            piper = lPipers[path];
+          for (path in pipers) {
+            piper = pipers[path];
             if (piper.dead) {
-              _results.push(lPipers[path] = null);
+              _results.push(pipers[path] = null);
             } else {
               _results.push(void 0);
             }
           }
           return _results;
         });
-        if (program.global !== '') {
-          gPiper = _this.execAndPipe(program.global);
-        }
-        if (program.local !== '') {
-          return lPipers[cleanPath] = _this.execAndPipe(program.local.replace('<file>', cleanPath));
+        if (program.exec !== '') {
+          return pipers[cleanPath] = _this.execAndPipe(program.exec.replace('<file>', cleanPath));
         }
       });
     };
