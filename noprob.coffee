@@ -126,7 +126,7 @@ class App
 			if program.global != ''
 				gPiper = @execAndPipe program.global
 			if program.local != ''
-				lPipers[cleanPath] = @execAndPipe program.local
+				lPipers[cleanPath] = @execAndPipe program.local.replace('<file>', cleanPath)
 			
 
 app = new App()

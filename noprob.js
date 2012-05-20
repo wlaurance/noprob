@@ -177,7 +177,7 @@
           gPiper = _this.execAndPipe(program.global);
         }
         if (program.local !== '') {
-          return lPipers[cleanPath] = _this.execAndPipe(program.local);
+          return lPipers[cleanPath] = _this.execAndPipe(program.local.replace('<file>', cleanPath));
         }
       });
     };
