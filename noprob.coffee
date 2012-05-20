@@ -83,11 +83,11 @@ class App
 		piper = exec command
 		
 		piper.stderr.on 'data', (data) =>
-			console.log "* Error detected.".red.bold
+			console.log "[noprob] Error detected.".red.bold
 			console.log ''
 			process.stdout.write data
 			console.log ''
-			console.log "No worries, I'll wait until you've changed something...".red.italic
+			console.log "[noprob] No worries, I'll wait until you've changed something...".red.italic
 			
 		piper.stdout.on 'data', (data) =>
 			process.stdout.write data
@@ -98,7 +98,7 @@ class App
 		return piper
 					
 	run: ->
-		console.log 'Watching for changes...'.green.bold
+		console.log '[noprob] Watching for changes...'.green.bold
 		
 		gPiper = null
 		lPipers = {}
@@ -111,7 +111,7 @@ class App
 			# console.log extension
 			
 			console.log ''
-			console.log "* Change detected.".green.bold
+			console.log "[noprob] Change detected.".green.bold
 			console.log "No prob, I'll take care of that...".green.italic
 			console.log ''
 			
