@@ -136,8 +136,8 @@
     };
 
     App.prototype.takeCareOfIt = function(what) {
-      console.log("No prob, I'll take care of that...".green.italic);
-      return console.log(("$ " + what).green);
+      console.log("[noprob] No prob, I'll take care of that...".green.italic);
+      return console.log(("[noprob] Executing '" + what + "'").green);
     };
 
     App.prototype.run = function() {
@@ -156,7 +156,6 @@
         if (!program.dot && _this.hasDotFile(cleanPath, fileName)) {
           return;
         }
-        console.log('');
         console.log(("[noprob] Change detected in " + fileName + ".").green.bold);
         process.nextTick(function() {
           var path, piper, _results;
