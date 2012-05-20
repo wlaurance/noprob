@@ -1,7 +1,7 @@
 {
   "name": "noprob",
   "description": "Simple file change monitoring for any kind of development.",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": {
     "name": "Dave Druelinger"
   },
