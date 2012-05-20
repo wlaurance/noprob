@@ -5,6 +5,7 @@ Simple file change monitoring for any kind of development.
 * [Why?](#a)
 * [Installation](#b)
 * [Options](#c)
+* [Usage and Examples](#d)
 
 <a name='a' />
 Why?
@@ -24,14 +25,33 @@ Run: `$ sudo npm -g install noprob`
 Options
 ----
 * -h, --help
-	* output usage information
+	* Output usage information.
 * -x, --exec [command]
-	* string to execute globally on any file change
+	* String to execute globally on any file change.
+	* You can wrap command strings in single `'` or double `"` quotes.
 * -l, --local [command]
-	* string to execute locally on any file that's changed
+	* String to execute locally on any file that's changed.
+	* Use `<file>` to mark where to insert the change file's name in the command string.
 * -w, --watch [directory]
-	* directory to watch
+	* Directory to watch.
 * -e, --extension [extensions]
-	* list of file extensions to watch
+	* List of file extensions to watch.
+	* Wrap in single or double quotes and seperate extensions with a `|`.
 * -d, --dot
-	* watch hidden dot files
+	* Watch hidden dot files.
+	* Files that begin with a '.' or that are in a folder that begins with a '.' are ignored by default.  Use this option to watch them.
+
+<a name='d' />
+Usage and Examples
+----
+There are two ways to execute commands in Noprob: globally and locally.
+
+**Global** commands run on every file change without worrying about specific files.  They are defined with `-x` or `--exec`.
+
+Run and restart a node server on javascript source changes:
+`$ noprob -x 'node server.js' -e 'js'`
+
+**Local** commands accept the `<file>` tag which will insert the changed file's name into the command.  They are defined with `-l` or `--local`.
+
+Compile individual coffescript files in the "src" folder into javascript on demand (closely mimics coffescript's internal -w option):
+`$ noprob -l 'coffee -c <file>' -e 'coffee' -w src`
