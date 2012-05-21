@@ -68,7 +68,7 @@ class App
 	setNodeFsWatcher: ->
 		@watcher = (cb) =>
 			fs.watch program.watch, (e, file) =>
-				if e == 'change'
+				if e == 'change' or e == 'rename'
 					cb(file)
 					
 	hasDotFile: (path, fileName) ->

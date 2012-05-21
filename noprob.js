@@ -89,7 +89,7 @@
       var _this = this;
       return this.watcher = function(cb) {
         return fs.watch(program.watch, function(e, file) {
-          if (e === 'change') {
+          if (e === 'change' || e === 'rename') {
             return cb(file);
           }
         });
