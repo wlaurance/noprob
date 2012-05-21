@@ -157,19 +157,6 @@
           return;
         }
         console.log(("[noprob] Change detected in " + fileName + ".").green.bold);
-        process.nextTick(function() {
-          var path, piper, _results;
-          _results = [];
-          for (path in lPipers) {
-            piper = lPipers[path];
-            if (piper.dead) {
-              _results.push(lPipers[path] = null);
-            } else {
-              _results.push(void 0);
-            }
-          }
-          return _results;
-        });
         if (program.exec !== '') {
           if (_this.currentTime() > gRelease) {
             gRelease = _this.currentTime() + 1;
