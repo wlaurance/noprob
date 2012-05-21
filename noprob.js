@@ -105,6 +105,7 @@
 
     App.prototype.parsePath = function(path) {
       var cleanPath, extension, fileName;
+      cleanPath = path;
       if (path.slice(0, 2) === './') {
         cleanPath = path.slice(2);
       }
