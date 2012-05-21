@@ -21,7 +21,7 @@ Installation
 ----
 [Install npm.](http://nodejs.org/#download) (it comes with Node.js).
 
-Run: `$ sudo npm -g install noprob`
+Run: `$ npm -g install noprob`
 
 <a name='c' />
 Options
