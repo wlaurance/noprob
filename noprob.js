@@ -23,6 +23,8 @@
       this.extensions = _.str.words(program.extension, '|');
       this.pollInterval = 500;
       this.lastTime = this.currentTime();
+      this.gRelease = this.currentTime() + 1;
+      this.errRelease = this.currentTime();
       if (process.platform === 'darwin') {
         this.setDarwinWatcher();
       } else if (!(fs.watch != null)) {
@@ -120,11 +122,13 @@
         _this = this;
       piper = exec(command);
       piper.stderr.on('data', function(data) {
-        console.log('');
-        console.log("[noprob] Error detected.".red.bold);
-        process.stdout.write(data);
-        console.log('');
-        return console.log("[noprob] No worries, I'll wait until you've changed something...".red.italic);
+        if (_this.currentTime() > _this.errRelease) {
+          _this.errRelease = _this.currentTime() + 1;
+          console.log('');
+          console.log("[noprob] Error detected.".red.bold);
+          console.log("[noprob] No worries, I'll wait until you've changed something...".red.italic);
+        }
+        return process.stdout.write(data);
       });
       piper.stdout.on('data', function(data) {
         return process.stdout.write(data);
@@ -141,11 +145,10 @@
     };
 
     App.prototype.run = function() {
-      var gPiper, gRelease, lPipers,
+      var gPiper, lPipers,
         _this = this;
       console.log('[noprob] Watching for changes...'.green.bold);
       gPiper = this.execAndPipe(program.exec);
-      gRelease = this.currentTime() + 1;
       lPipers = {};
       return this.watcher(function(file) {
         var cleanPath, extension, fileName, tempCmd, _ref, _ref1;
@@ -158,8 +161,8 @@
         }
         console.log(("[noprob] Change detected in " + fileName + ".").green.bold);
         if (program.exec !== '') {
-          if (_this.currentTime() > gRelease) {
-            gRelease = _this.currentTime() + 1;
+          if (_this.currentTime() > _this.gRelease) {
+            _this.gRelease = _this.currentTime() + 1;
             _this.takeCareOfIt(program.exec);
             if (gPiper != null) {
               gPiper.kill();

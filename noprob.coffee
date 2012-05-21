@@ -21,6 +21,11 @@ class App
 		@pollInterval = 500
 		@lastTime = @currentTime()
 		
+		# releases keep commands and logs from getting printed over and over
+		# when there is a sudden influx of changes or messages
+		@gRelease = @currentTime() + 1
+		@errRelease = @currentTime()
+		
 		if process.platform == 'darwin'
 			@setDarwinWatcher()
 		else if not fs.watch?
@@ -83,11 +88,12 @@ class App
 		piper = exec command
 		
 		piper.stderr.on 'data', (data) =>
-			console.log ''
-			console.log "[noprob] Error detected.".red.bold
+			if @currentTime() > @errRelease
+				@errRelease = @currentTime() + 1
+				console.log ''
+				console.log "[noprob] Error detected.".red.bold
+				console.log "[noprob] No worries, I'll wait until you've changed something...".red.italic
 			process.stdout.write data
-			console.log ''
-			console.log "[noprob] No worries, I'll wait until you've changed something...".red.italic
 			
 		piper.stdout.on 'data', (data) =>
 			process.stdout.write data
@@ -105,7 +111,6 @@ class App
 		console.log '[noprob] Watching for changes...'.green.bold
 		
 		gPiper = @execAndPipe program.exec
-		gRelease = @currentTime() + 1
 		lPipers = {}
 		@watcher (file) =>
 			[cleanPath, fileName, extension] = @parsePath file
@@ -123,8 +128,8 @@ class App
 			# 		if piper?.dead then lPipers[path] = null
 				
 			if program.exec != ''
-				if @currentTime() > gRelease
-					gRelease = @currentTime() + 1
+				if @currentTime() > @gRelease
+					@gRelease = @currentTime() + 1
 					@takeCareOfIt program.exec
 					gPiper?.kill()
 					gPiper = @execAndPipe program.exec
