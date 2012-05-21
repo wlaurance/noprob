@@ -57,3 +57,6 @@ Run and restart a node server on javascript source changes:
 
 Compile individual coffescript files in the "src" folder into javascript on demand (closely mimics coffescript's internal -w option):
 * `$ noprob -l 'coffee -c <file>' -e 'coffee' -w src`
+
+Copy changed files into a 'copies' folder one directory above the current one (we don't put it in a nested directory since noprob would try to copy new files it copies into there)
+* `$ noprob -l 'cp <file> ../copies/'`
