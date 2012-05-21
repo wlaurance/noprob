@@ -77,6 +77,7 @@ class App
 		false
 					
 	parsePath: (path) ->
+		cleanPath = path
 		cleanPath = path[2..] unless path[0..1] != './'
 		cleanPath = cleanPath.replace /\ /g, '\\ '
 		fileName = cleanPath[cleanPath.lastIndexOf('/')+1..]
