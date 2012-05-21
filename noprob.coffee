@@ -118,9 +118,9 @@ class App
 			console.log "[noprob] Change detected in #{fileName}.".green.bold
 			
 			# clean up dead pipes
-			process.nextTick ->
-				for path,piper of lPipers
-					if piper.dead then lPipers[path] = null
+			# process.nextTick ->
+			# 	for path,piper of lPipers
+			# 		if piper?.dead then lPipers[path] = null
 				
 			if program.exec != ''
 				if @currentTime() > gRelease
