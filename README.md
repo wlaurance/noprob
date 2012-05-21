@@ -2,7 +2,7 @@ Noprob
 ====
 Simple file change monitoring for any kind of development.
 
-**Note:** Noprob has just been released and I haven't had the chance to test it on any system besides osx yet.  I'll get to it soon.
+**Note:** Noprob has just been released and I haven't had the chance to test it on Windows yet.  I'll get to it soon.
 
 * [Why?](#a)
 * [Installation](#b)
