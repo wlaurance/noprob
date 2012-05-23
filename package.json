@@ -1,9 +1,10 @@
 {
-  "name": "noprob",
+  "name": "noprob-api",
   "description": "Simple file change monitoring for any kind of development.",
   "version": "0.3.7",
   "author": {
-    "name": "Dave Druelinger"
+    "name": "Dave Druelinger",
+    "name": "Will S. Laurance"
   },
   "keywords": [
     "noprob",
@@ -28,10 +29,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/genericdave/noprob.git"
+    "url": "git://github.com/wlaurance/noprob.git"
   },
-  "preferGlobal": "true",
-  "bin": {
-    "noprob": "./noprob_bin"
-  }
 }
