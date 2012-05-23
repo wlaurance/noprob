@@ -26,18 +26,20 @@ class App
     @gRelease = @currentTime() + 1
     @errRelease = @currentTime()
     
+    @setWatcher()
+    @run()
+
+  currentTime: ->
+    Math.round(new Date().getTime() / 1000)
+ 
+  setWatcher:->
     if process.platform == 'darwin'
       @setDarwinWatcher()
     else if not fs.watch?
       @setWatchWatcher()
     else
       @setNodeFsWatcher()
-    
-    @run()
-
-  currentTime: ->
-    Math.round(new Date().getTime() / 1000)
-    
+   
   setDarwinWatcher: ->
     repeatCheck = {}
     @watcher = (cb) =>
@@ -111,8 +113,6 @@ class App
   run: ->
     console.log '[noprob] Watching for changes...'.green.bold
     
-    gPiper = @execAndPipe program.exec
-    lPipers = {}
     @watcher (file) =>
       [cleanPath, fileName, extension] = @parsePath file
       if @extensions.indexOf(extension) == -1 and program.extension != '' then return
@@ -127,18 +127,23 @@ class App
       # process.nextTick ->
       #   for path,piper of lPipers
       #     if piper?.dead then lPipers[path] = null
-        
-      if program.exec != ''
-        if @currentTime() > @gRelease
-          @gRelease = @currentTime() + 1
-          @takeCareOfIt program.exec
-          gPiper?.kill()
-          gPiper = @execAndPipe program.exec
-      if program.local != ''
-        tempCmd = program.local.replace('<file>', cleanPath)
-        @takeCareOfIt tempCmd
-        lPipers[cleanPath]?.kill()
-        lPipers[cleanPath] = @execAndPipe tempCmd
-      
+      @doAction cleanPath
 
+  doAction:(cleanPath)=>
+    gPiper = @execAndPipe program.exec
+    lPipers = {}
+    if program.exec != ''
+      if @currentTime() > @gRelease
+        @gRelease = @currentTime() + 1
+        @takeCareOfIt program.exec
+        gPiper?.kill()
+        gPiper = @execAndPipe program.exec
+    if program.local != ''
+      tempCmd = program.local.replace('<file>', cleanPath)
+      @takeCareOfIt tempCmd
+      lPipers[cleanPath]?.kill()
+      lPipers[cleanPath] = @execAndPipe tempCmd
+    
+      
 app = new App()
+module.exports = App

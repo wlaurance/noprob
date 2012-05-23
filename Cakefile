@@ -11,6 +11,6 @@ execAndPipe = (execString) ->
 		process.stdout.write data.toString()
 			
 task 'watch', 'Compile Speedr in watch mode', ->
-	execAndPipe 'coffee -cw noprob.coffee'
+	execAndPipe 'coffee -cw *.coffee'
 
 task 'w', 'Shorthand for "watch"', -> invoke 'watch'
