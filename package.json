@@ -3,9 +3,14 @@
   "description": "Simple file change monitoring for any kind of development.",
   "version": "0.0.1",
   "author": {
-    "name": "Dave Druelinger",
-    "name": "Will S. Laurance"
+    "name": "Dave Druelinger"
   },
+  "contributors":[
+    { 
+      "name":"Will S. Laurance",
+      "url":"http://wlaurance.com"
+    }
+  ],
   "keywords": [
     "noprob",
     "monitor",
