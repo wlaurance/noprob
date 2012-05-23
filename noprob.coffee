@@ -9,6 +9,22 @@ watch   = require 'watch'
 
 class App
   constructor: ->
+    @commandLine()
+    @extras()
+    @setWatcher()
+    @run()
+
+  extras:->
+    @extensions = _.str.words program.extension, '|'
+    @pollInterval = 500
+    @lastTime = @currentTime()
+
+    # releases keep commands and logs from getting printed over and over
+    # when there is a sudden influx of changes or messages
+    @gRelease = @currentTime() + 1
+    @errRelease = @currentTime()
+
+  commandLine: ->
     program
     .option('-x, --exec [command]', 'string to execute globally on any file change', '')
     .option('-l, --local [command]', "string to execute locally on any file that's changed", '')
@@ -16,18 +32,6 @@ class App
     .option('-e, --extension [extensions]', 'list of file extensions to watch', '')
     .option('-d, --dot', 'watch hidden dot files')
     .parse(process.argv)
-    
-    @extensions = _.str.words program.extension, '|'
-    @pollInterval = 500
-    @lastTime = @currentTime()
-    
-    # releases keep commands and logs from getting printed over and over
-    # when there is a sudden influx of changes or messages
-    @gRelease = @currentTime() + 1
-    @errRelease = @currentTime()
-    
-    @setWatcher()
-    @run()
 
   currentTime: ->
     Math.round(new Date().getTime() / 1000)
@@ -143,7 +147,5 @@ class App
       @takeCareOfIt tempCmd
       lPipers[cleanPath]?.kill()
       lPipers[cleanPath] = @execAndPipe tempCmd
-    
-      
-app = new App()
+
 module.exports = App
