@@ -1,7 +1,7 @@
 {
   "name": "noprob-api",
   "description": "Simple file change monitoring for any kind of development.",
-  "version": "0.3.7",
+  "version": "0.0.1",
   "author": {
     "name": "Dave Druelinger",
     "name": "Will S. Laurance"
@@ -30,5 +30,5 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/wlaurance/noprob.git"
-  },
+  }
 }
