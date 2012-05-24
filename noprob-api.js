@@ -30,9 +30,9 @@
     };
 
     Api.prototype.doAction = function(cleanPath) {
-      try {
+      if (this.client_action != null) {
         return this.client_action(cleanPath);
-      } catch (e) {
+      } else {
         throw new Error('No client_action provided');
       }
     };

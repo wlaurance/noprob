@@ -10,9 +10,9 @@ class Api extends noprob
     throw new Error 'Supplied argument is not of type function' if typeof @client_action isnt 'function'
 
   doAction:(cleanPath)=>
-    try
+    if @client_action?
       @client_action cleanPath
-    catch e
+    else
       throw new Error 'No client_action provided'
 
   setWatchDirectory:(dir)->
