@@ -1,15 +1,10 @@
 {
   "name": "noprob-api",
   "description": "Simple file change monitoring for any kind of development.",
-  "version": "0.0.1",
-  "author": {
-    "name": "Dave Druelinger"
-  },
-  "contributors":[
-    { 
-      "name":"Will S. Laurance",
-      "url":"http://wlaurance.com"
-    }
+  "version": "0.0.2",
+  "author": "Dave Druelinger",
+  "contributors": [
+    "Will S. Laurance (http://wlaurance.com)"
   ],
   "keywords": [
     "noprob",
@@ -26,15 +21,20 @@
     "walk"
   ],
   "dependencies": {
-    "watch":"*",
-    "commander":"*",
-    "colors":"*",
-    "underscore":"*",
-    "underscore.string":"*"
+    "watch": "*",
+    "commander": "*",
+    "colors": "*",
+    "underscore": "*",
+    "underscore.string": "*"
   },
   "repository": {
     "type": "git",
     "url": "git://github.com/wlaurance/noprob.git"
   },
-  "main":"noprob-api.js"
+  "main": "noprob-api.js",
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
 }
