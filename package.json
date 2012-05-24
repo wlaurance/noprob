@@ -35,5 +35,6 @@
   "repository": {
     "type": "git",
     "url": "git://github.com/wlaurance/noprob.git"
-  }
+  },
+  "main":"noprob-api.js"
 }
